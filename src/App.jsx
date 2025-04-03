@@ -1,187 +1,79 @@
-import { useState,useRef, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import { useState, useRef, useEffect } from "react";
+import "./App.css";
+import Gradiente from "./Components/Gradients";
+import Codes from "./Components/Codes";
 
 function App() {
-  const [color1, setColor1] = useState('')
-  const [color2, setColor2] = useState('')
-  const [copied, setCopied] = useState(false)
-  let colorsArr = ['black', 'black']
+    const [colors, setColors] = useState({ color1: "#000000", color2: "#000000" }); // Valores predeterminados
+    const [direction, setDirection] = useState("right");
+    const [copied, setCopied] = useState(false);
 
-  const input1 = useRef()
-  const input2 = useRef()
-  
-  let input = useRef()
-  const [direction, setDirection] = useState('right')
+    const inputRefs = [useRef(), useRef()];
+    const directions = [
+        { direction: "top left", src: "arrow_top_left.png", size: 30 },
+        { direction: "top", src: "arrow_top.png", size: 30 },
+        { direction: "top right", src: "arrow_top_right.png", size: 30 },
+        { direction: "left", src: "arrow_left.png", size: 20 },
+        { direction: "right", src: "arrow_right.png", size: 18 },
+        { direction: "bottom left", src: "arrow_down_left.png", size: 23 },
+        { direction: "bottom", src: "arrow_down.png", size: 18 },
+        { direction: "bottom right", src: "arrow_down_right.png", size: 22 },
+    ];
 
-  const arr = [
-    {
-      direction: 'top left',
-      src: 'arrow_top_left.png',
-      width:30,
-      height:30
-      
-    },
-    {
-      direction: 'top',
-      src: 'arrow_top.png',
-      width:30,
-      height:30
-    },
-    {
-      direction: 'top right',
-      src: 'arrow_top_right.png',
-      width:30,
-      height:30
-    },
-    {
-      direction: 'left',
-      src: 'arrow_left.png',
-      width:20,
-      height:20
-    },
-    {
-    
-    },
-    {
-      direction: 'right',
-      src: 'arrow_right.png',
-      width:18,
-      height:18
-    },
-    {
-      direction: 'bottom left',
-      src: 'arrow_down_left.png',
-      width:23,
-      height:23
-    },
-    {
-      direction: 'bottom',
-      src: 'arrow_down.png',
-      width:18,
-      height:18
-    },
-    {
-      direction: 'bottom right',
-      src: 'arrow_down_right.png',
-      width:22,
-      height:22
-    }
-  ];
-  
-  
-  const cant_btns = ['','']
-  const [realcolors, SetRealcolors] = useState()
+    useEffect(() => setCopied(false), [colors, direction]);
 
-  useEffect(() => {
-    setCopied(false);
+    const handleColorChange = () => {
+        setColors({
+            color1: inputRefs[0].current.value,
+            color2: inputRefs[1].current.value,
+        });
+    };
 
-  }, [color1, color2, direction])
- 
-  const handleColor = () => {
-    setColor1(input1.current.value)
-    setColor2(input2.current.value)
-    console.log(input1);
-    
-    
-  }
+    return (
+        <div className="container">
+            <h1 className="title">Gradient Maker</h1>
+            <h3 className="subtitle">Create your beautiful gradients</h3>
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(`linear-gradient(to right, ${color1}, ${color2})`).then(() => {
-      setCopied(true)
-    })
-  }
+            <div className="container-stuff">
+                {/* Inputs de selección de color */}
+                <div className="container-colors">
+                    {["Color 1", "Color 2"].map((label, idx) => (
+                        <div key={idx}>
+                            <h3>{label}:</h3>
+                            <input ref={inputRefs[idx]} type="color" onChange={handleColorChange} />
+                        </div>
+                    ))}
 
-  const handleDirection = (item) => {
-    setDirection(item.direction);
-    
- } 
- const handleError = (e) => {
-  e.target.src = ''; // Puedes poner aquí la ruta de una imagen de respaldo si quieres
-  e.target.alt = 'Imagen no encontrada'; // Opcionalmente, puedes cambiar el texto alternativo
-  e.target.style.display = 'none'; // Ocultar la imagen
-};
+                    {/* Botones de dirección */}
+                    <ul className="container-direction">
+                        {directions.map((item, idx) => (
+                            <li key={idx}>
+                                <button
+                                    className="btn-direction"
+                                    onClick={() => setDirection(item.direction)}
+                                    disabled={!item.direction}
+                                >
+                                    <img
+                                        src={item.src}
+                                        alt={item.direction || "N/A"}
+                                        width={item.size}
+                                        height={item.size}
+                                        onError={(e) => (e.target.style.display = "none")}
+                                    />
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
-  return (
-    <>
-      <div className='container'> 
-        
-      <h1>Create your Gradient</h1>
-      
-      <div className='container-stuff'>
+                {/* Visualización del gradiente */}
+                <Gradiente direction={direction} {...colors} />
+            </div>
 
-        {/*
-        
-        <div className='container-inputs'>
-            <ul>
-              {cant_btns.map((item, index) => (
-                 <li key={index}>
-                    <h3>Color: {index}</h3>
-                    <input ref={input} type="color" onChange={() => handleColor(index)} />
-                  
-                 </li>
-              ))}
-            </ul>
-            
-        */}
-            <div className='container-colors'>
-              <div>
-                <h3>Color 1:</h3>
-                <input ref={input1} type="color" onChange={handleColor}/>
-              </div>
-              
-              <div>
-                <h3>Color 2:</h3>
-                <input ref={input2} type="color"  onChange={handleColor}/>
-              </div>
-            
-           
-            
-            <ul className='container-direction'>
-                {arr.map((item,index) => (
-                    <li key={index}>
-                        <button className='btn-direction' disabled={!item.direction} onClick={() => handleDirection(item)}>
-                          <img disabled={item == ''} src={item.src} alt={item.direction} width={item.width} height={item.height} className='direction_img' handleError={handleError} />
-                        </button>
-                    </li>
-
-                ))}
-            </ul>
-
-
-              
-       
-        
-           
-            
+            {/* Generación de código CSS */}
+            <Codes direction={direction} {...colors} copied={copied} setCopied={setCopied} />
         </div>
-          
-      
-        <div className='div-final'>
-          <div className='gradiente' style={{backgroundImage: `linear-gradient(to ${direction},  ${color1}, ${color2}`}}>
-          
-          </div>
-
-          
-        </div>
-      </div>
-      
-      </div>
-      
-      <div className='answer'>
-        <h3>Codigo CSS: </h3>
-        
-        <div className='div-code'>
-          <p className='code'>linear-gradient(to {direction}, {color1}, {color2})</p>
-          <button className='btn' onClick={handleCopy}>{copied 
-            ? <img src="check.png" alt="copied" width={30} height={30} /> 
-            : <img src="copy.png" alt="copy" width={30} height={30} /> }</button>
-        </div>
-      </div>
-    </>
-  )
+    );
 }
 
-export default App
+export default App;
