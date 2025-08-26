@@ -45,25 +45,30 @@ function App() {
                     ))}
 
                     {/* Botones de dirección */}
-                    <ul className="container-direction">
-                        {directions.map((item, idx) => (
-                            <li key={idx}>
-                                <button
-                                    className="btn-direction"
-                                    onClick={() => setDirection(item.direction)}
-                                    disabled={!item.direction}
-                                >
-                                    <img
-                                        src={item.src}
-                                        alt={item.direction || "N/A"}
-                                        width={item.size}
-                                        height={item.size}
-                                        onError={(e) => (e.target.style.display = "none")}
-                                    />
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                  {/* Botones de dirección en forma de rosa náutica */}
+                    <div className="rose-container">
+                    <div className="rose-center"></div>
+                    {directions.map((item, idx) => (
+                        <button
+                        key={idx}
+                        className={`rose-btn rose-${item.direction.replace(" ", "-")}`}
+                        onClick={() => setDirection(item.direction)}
+                        disabled={!item.direction}
+                        >
+                        <img
+                            src={item.src}
+                            alt={item.direction || "N/A"}
+                            width={item.size}
+                            height={item.size}
+                            onError={(e) => (e.target.style.display = "none")}
+                        />
+                        </button>
+                    ))}
+                    </div>
+
+
+
+
                 </div>
 
                 {/* Visualización del gradiente */}
